@@ -15,7 +15,7 @@ class DomRiaComSpider(scrapy.Spider):
 
     def parse(self, response):
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
-                                     'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
+                                      'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url=f'{response.url}?page={page}',
                                  callback=self.parse_category)
@@ -29,9 +29,10 @@ class DomRiaComSpider(scrapy.Spider):
                 l.add_value('title', data.get('name'))
                 l.add_value('description', data.get('description'))
                 l.add_value('price_USD', data['offers']['price'])
+                l.add_value('sku', data['offers']['sku'])
 
                 sku = data['offers']['sku']
-                l.add_xpath('price_UAH', f'//section[@data-realtyid="{sku}"]//b[@title="Цена"]/text()')
+                l.add_xpath('price_UAH', f'//section[@data-realtyid="{sku}"]//b[@title="Цена"]/text()', re='\d+\s\d+')
                 l.add_xpath('district', f'//section[@data-realtyid="{sku}"]//h3[contains(@class,"size18")]'
                                         f'/a/text()[1]')
                 l.add_xpath('rooms_count', f'//section[@data-realtyid="{sku}"]//li[@title="Комнат"]/text()', re='\d+')
