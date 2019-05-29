@@ -4,6 +4,8 @@ from urllib.parse import urljoin
 
 import scrapy
 from scrapy.loader import ItemLoader
+from scrapy.spidermiddlewares.httperror import HttpError
+from scrapy.utils.response import open_in_browser
 
 from ria_ua_crawler.items import RiaLoader, RiaUaCrawlerItem
 
@@ -16,11 +18,12 @@ class DomRiaComSpider(scrapy.Spider):
     def parse(self, response):
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
                                      'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
+        pages_count = [1]
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url=f'{response.url}?page={page}',
                                  callback=self.parse_category)
 
-    def parse_category(self, response):
+    def parse_category_item(self, response):
         jsonresponse = response.xpath('//script[@type="application/ld+json"]/text()').extract()
         if jsonresponse:
             json_data = json.loads(*jsonresponse)[0]
@@ -41,4 +44,33 @@ class DomRiaComSpider(scrapy.Spider):
 
         else:
             raise ValueError('jsonresponse is empty')
+
+    def parse_category(self, response):
+        urls = response.xpath('//a[@class="all-clickable unlink"]/@href').extract()
+        for url in urls:
+            yield scrapy.Request(url=urljoin(response.url, url),
+                                 callback=self.parse_item)
+
+    def parse_item(self, response):
+        if response.xpath('//dl[@class="head__page-404"]').extract():
+            return HttpError('404 Not found')
+        l = RiaLoader(RiaUaCrawlerItem(), response=response)
+        jsonresponse = response.xpath('//script[@type="application/ld+json"]/text()').extract()
+        if jsonresponse:
+            json_data = json.loads(*jsonresponse)[0]
+        #     l.add_value('title', json_data.get(''))
+        #     l.add_value('description')
+        #     l.add_value('price_USD')
+        #     l.add_value('price_UAH')
+        #     l.add_value('district')
+        #     l.add_value('rooms_count')
+
+        l.add_xpath('title', '//h1/text()')
+        l.add_xpath('description', '//div[@id=descriptionBlock]')
+        l.add_xpath('price_USD', '//span[@class="grey size13"]/text()')
+        l.add_xpath('price_UAH', '//span[@class="price"]/text()')
+        l.add_xpath('district', '//h1', re='р‑н?.\s+?(.+),')
+        l.add_xpath('rooms_count', '//div[@title="Комнат"]/text()', re='\d+')
+        l.add_value('url', response.url)
+        yield l.load_item()
 

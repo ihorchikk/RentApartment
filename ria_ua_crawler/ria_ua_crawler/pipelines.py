@@ -13,9 +13,9 @@ import sqlite3
 class RiaUaCrawlerPipeline(object):
     def __init__(self):
         # Possible we should be doing this in spider_open instead, but okay
-        self.connection = sqlite3.connect('../scrapedata.db')
+        self.connection = sqlite3.connect('../../webapp/db.sqlite3')
         self.cursor = self.connection.cursor()
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS ria_com '
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS flats_advert '
                             '(id INTEGER PRIMARY KEY, '
                             'title VARCHAR(80), '
                             'description VARCHAR(80),'
@@ -27,14 +27,14 @@ class RiaUaCrawlerPipeline(object):
 
     # Take the item and put it in database - do not allow duplicates
     def process_item(self, item, spider):
-        self.cursor.execute("select * from ria_com where url=?", (item['url'],))
+        self.cursor.execute("select * from flats_advert where url=?", (item['url'],))
         result = self.cursor.fetchone()
         if result:
             print('  '* 1000)
             log.msg("Item already in database: %s" % item, level=log.DEBUG)
         else:
             self.cursor.execute(
-                "insert into ria_com (title, description, price_USD, price_UAH, district, rooms_count, url) "
+                "insert into flats_advert (title, description, price_USD, price_UAH, district, rooms_count, url) "
                 "values (?, ?, ?, ?, ?, ?, ?)", (item['title'],
                                                  item['description'],
                                                  item['price_USD'],

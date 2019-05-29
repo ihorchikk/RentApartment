@@ -1,0 +1,74 @@
+{% extends 'flats/base.html' %}
+
+{% block title %}
+    Welcome to flats list
+{% endblock %}
+
+
+{% block content %}
+
+
+{% for contact in contacts %}
+{{ contact.full_name|upper }}<br>
+
+
+<!--<div align="center">-->
+    <!--<div class="card border-warning mb-3" style="max-width: 70rem;">-->
+  <!--<div class="card-header">-->
+    <!--Featured-->
+  <!--</div>-->
+  <!--<div class="card-body">-->
+    <!--<h5 class="card-title">{{ contact.title }}</h5>-->
+    <!--<p class="card-text">{{ contact.description }}</p>-->
+    <!--<a href="{{ contact.url }}" class="btn btn-primary">Go somewhere</a>-->
+  <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+<div class="card" style="width: 18rem;">
+  <img src="" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{ contact.title }}</h5>
+    <p class="card-text">{{ contact.description }}</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Cras justo odio</li>
+    <li class="list-group-item">Dapibus ac facilisis in</li>
+    <li class="list-group-item">Vestibulum at eros</li>
+  </ul>
+  <div class="card-body">
+    <a href="#" class="card-link">Card link</a>
+    <a href="#" class="card-link">Another link</a>
+  </div>
+</div>
+
+{% endfor %}
+
+<nav aria-label="..." >
+    <ul class="pagination justify-content-center" >
+        <li class="page-item" >
+            {% if contacts.has_previous %}
+            <a class="page-link" href="?page={{ contacts.previous_page_number }}" tabindex="-1" aria-disabled="true">Previous</a>
+            {% endif %}
+        </li>
+
+        {% if contacts.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ contacts.previous_page_number }}">{{ contacts.previous_page_number }}</a></li>
+        {% endif %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
+        </li>
+        {% if contacts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">{{ contacts.next_page_number }}</a></li>
+        {% endif %}
+
+        <li class="page-item">
+            {% if contacts.has_next %}
+            <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
+            {% endif %}
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+
