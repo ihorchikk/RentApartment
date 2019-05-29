@@ -17,10 +17,11 @@ class RiaUaCrawlerItem(scrapy.Item):
     title = scrapy.Field(required=True)
     description = scrapy.Field(required=True)
     rooms_count = scrapy.Field(required=True)
-    price_USD = scrapy.Field(required=True)
+    price_USD = scrapy.Field(required=True, )
     price_UAH = scrapy.Field(required=True)
     url = scrapy.Field(required=True)
     district = scrapy.Field(required=True)
+    sku = scrapy.Field(required=True)
 
 
 class RiaLoader(ItemLoader):
