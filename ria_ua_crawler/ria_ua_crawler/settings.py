@@ -65,8 +65,8 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineSQLite3': 300,
-    'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineRedis': 300,
-    'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineElasticSearch': 300,
+    # 'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineRedis': 300,
+    # 'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineElasticSearch': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -7,39 +7,53 @@
 
 {% block content %}
 
+<a class="btn btn-primary" href="{% url 'sort_by_price_asc' %}" role="button">Отсортировать по цене по убыванию</a>
+<a class="btn btn-primary" href="{% url 'sort_by_price_desc' %}" role="button">Отсортировать по цене по возростанию</a>
+<a class="btn btn-primary" href="#" role="button">Отсортировать по дате добавления от самого первого</a>
+<a class="btn btn-primary" href="#" role="button">Отсортировать по дате добавления от последнего</a>
+
+
+<div class="container">
+    <ul class="nav nav-pills">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu">
+                {% for dist in district%}
+                <a class="dropdown-item" href="#">{{dist.district}} ({{dist.dcount}})</a>
+                {% endfor %}
+            </div>
+        </li>
+    </ul>
+</div>
+
+
 
 {% for contact in contacts %}
 {{ contact.full_name|upper }}<br>
+<div align="center">
+    <div class="card border-warning mb-3" style="max-width: 70rem;">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <img src="{{ contact.image_url }}" class="card-img" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <big>
+                        <a class="card-title" href="{{ contact.url }}" title="{{ contact.title }}" style="color:#000000">{{ contact.title }}</a>
+                    </big>
+                    <hr>
+                    <small class="card-text">{{ contact.description }}</small>
+                    <hr>
+                    <p class="card-text"><small class="text-muted">Количество комнат - {{ contact.rooms_count }}</small></p>
+                    <p class="card-text"><small class="text-muted">Цена USD - {{ contact.price_USD }}</small></p>
+                    <p class="card-text"><small class="text-muted">Цена UAH - {{ contact.price_UAH }}</small></p>
+                    <p class="card-text"><small class="text-muted">Район - {{ contact.district }}</small></p>
+                    <p class="card-text"><small class="text-muted">Код - {{ contact.sku }}</small></p>
 
-
-<!--<div align="center">-->
-    <!--<div class="card border-warning mb-3" style="max-width: 70rem;">-->
-  <!--<div class="card-header">-->
-    <!--Featured-->
-  <!--</div>-->
-  <!--<div class="card-body">-->
-    <!--<h5 class="card-title">{{ contact.title }}</h5>-->
-    <!--<p class="card-text">{{ contact.description }}</p>-->
-    <!--<a href="{{ contact.url }}" class="btn btn-primary">Go somewhere</a>-->
-  <!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<div class="card" style="width: 18rem;">
-  <img src="" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{ contact.title }}</h5>
-    <p class="card-text">{{ contact.description }}</p>
-  </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Cras justo odio</li>
-    <li class="list-group-item">Dapibus ac facilisis in</li>
-    <li class="list-group-item">Vestibulum at eros</li>
-  </ul>
-  <div class="card-body">
-    <a href="#" class="card-link">Card link</a>
-    <a href="#" class="card-link">Another link</a>
-  </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endfor %}

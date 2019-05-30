@@ -6,6 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy.item import Field
 from scrapy.loader import ItemLoader, Identity
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
@@ -14,14 +15,16 @@ class RiaUaCrawlerItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
 
-    title = scrapy.Field(required=True)
-    description = scrapy.Field(required=True)
-    rooms_count = scrapy.Field(required=True)
-    price_USD = scrapy.Field(required=True, )
-    price_UAH = scrapy.Field(required=True)
-    url = scrapy.Field(required=True)
-    district = scrapy.Field(required=True)
-    sku = scrapy.Field(required=True)
+    title = Field(required=True)
+    description = Field(required=True)
+    rooms_count = Field(required=True)
+    price_USD = Field(type='float', required=True)
+    price_UAH = Field(type='int', required=True)
+    url = Field(required=True)
+    district = Field(required=True)
+    sku = Field(required=True, )
+    image_url = Field(required=True)
+    published_at = Field(required=True)
 
 
 class RiaLoader(ItemLoader):

@@ -55,22 +55,21 @@ class DomRiaComSpider(scrapy.Spider):
         if response.xpath('//dl[@class="head__page-404"]').extract():
             return HttpError('404 Not found')
         l = RiaLoader(RiaUaCrawlerItem(), response=response)
-        jsonresponse = response.xpath('//script[@type="application/ld+json"]/text()').extract()
+        jsonresponse = response.xpath('//script[@type="application/ld+json" and contains(text(), "Product")]/text()').extract()
         if jsonresponse:
             json_data = json.loads(*jsonresponse)[0]
-        #     l.add_value('title', json_data.get(''))
-        #     l.add_value('description')
-        #     l.add_value('price_USD')
-        #     l.add_value('price_UAH')
-        #     l.add_value('district')
-        #     l.add_value('rooms_count')
+            l.add_value('title', json_data.get('name'))
+            l.add_value('image_url', json_data.get('image'))
+            l.add_value('description', json_data.get('description'))
+            l.add_value('price_USD', json_data.get('offers').get('price'))
+            l.add_value('sku', json_data.get('sku'))
 
         l.add_xpath('title', '//h1/text()')
-        l.add_xpath('description', '//div[@id=descriptionBlock]')
         l.add_xpath('price_USD', '//span[@class="grey size13"]/text()')
         l.add_xpath('price_UAH', '//span[@class="price"]/text()')
-        l.add_xpath('district', '//h1', re='р‑н?.\s+?(.+),')
-        l.add_xpath('rooms_count', '//div[@title="Комнат"]/text()', re='\d+')
+        l.add_xpath('district', '//h1', re='р‑н?.\s+?(.+?),')
+        l.add_xpath('rooms_count', '//*[@title="комнат"]/text()', re='(\d+)')
         l.add_value('url', response.url)
+        l.add_xpath('published_at', '//*[contains(text(),"Опубликовано")]/text()[2]')
         yield l.load_item()
 
