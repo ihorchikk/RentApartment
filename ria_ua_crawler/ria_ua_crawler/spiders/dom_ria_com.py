@@ -3,9 +3,7 @@ import json
 from urllib.parse import urljoin
 
 import scrapy
-from scrapy.loader import ItemLoader
 from scrapy.spidermiddlewares.httperror import HttpError
-from scrapy.utils.response import open_in_browser
 
 from ria_ua_crawler.items import RiaLoader, RiaUaCrawlerItem
 
@@ -17,7 +15,7 @@ class DomRiaComSpider(scrapy.Spider):
 
     def parse(self, response):
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
-                                     'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
+                                      'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
         pages_count = [1]
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url=f'{response.url}?page={page}',
@@ -34,11 +32,11 @@ class DomRiaComSpider(scrapy.Spider):
                 l.add_value('price_USD', data['offers']['price'])
 
                 sku = data['offers']['sku']
-                l.add_xpath('price_UAH', f'//section[@data-realtyid="{sku}"]//b[@title="Цена"]/text()')
-                l.add_xpath('district', f'//section[@data-realtyid="{sku}"]//h3[contains(@class,"size18")]'
-                                        f'/a/text()[1]')
-                l.add_xpath('rooms_count', f'//section[@data-realtyid="{sku}"]//li[@title="Комнат"]/text()', re='\d+')
-                item_url = l.get_xpath(f'//section[@data-realtyid="{sku}"]//a[@class="blue"]/@href')
+                selector = f'//section[@data-realtyid="{sku}"]'
+                l.add_xpath('price_UAH', f'{selector}//b[@title="Цена"]/text()')
+                l.add_xpath('district', f'{selector}//h3[contains(@class,"size18")]/a/text()[1]')
+                l.add_xpath('rooms_count', f'{selector}//li[@title="Комнат"]/text()', re='\d+')
+                item_url = l.get_xpath(f'{selector}//a[@class="blue"]/@href')
                 l.add_value('url', urljoin(response.url, *item_url))
                 yield l.load_item()
 
@@ -55,9 +53,10 @@ class DomRiaComSpider(scrapy.Spider):
         if response.xpath('//dl[@class="head__page-404"]').extract():
             return HttpError('404 Not found')
         l = RiaLoader(RiaUaCrawlerItem(), response=response)
-        jsonresponse = response.xpath('//script[@type="application/ld+json" and contains(text(), "Product")]/text()').extract()
-        if jsonresponse:
-            json_data = json.loads(*jsonresponse)[0]
+        json_response = response.xpath('//script[@type="application/ld+json" '
+                                       'and contains(text(), "Product")]/text()').extract()
+        if json_response:
+            json_data = json.loads(*json_response)[0]
             l.add_value('title', json_data.get('name'))
             l.add_value('image_url', json_data.get('image'))
             l.add_value('description', json_data.get('description'))

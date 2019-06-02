@@ -1,0 +1,19 @@
+{% extends 'flats/base.html' %}
+
+{% block title %}
+    Sorry, we are not found results for You!
+{% endblock %}
+
+
+{% block content %}
+
+<div class="alert alert-danger" role="alert">
+    Sorry, we are not found results for You! Please, try again.
+</div>
+
+<form class="form-inline my-2 my-lg-0" method="get">
+      <input class="form-control mr-sm-2" placeholder="Search" aria-label="Search" name="search_data">
+        <!--<input class="form-control mr-sm-2" type="button" />-->
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+{% endblock %}

@@ -21,7 +21,7 @@ USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 # ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 15
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -64,9 +64,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineSQLite3': 300,
+    'ria_ua_crawler.pipelines.RiaUaCrawlerPipelinePostgres': 300,
     # 'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineRedis': 300,
-    # 'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineElasticSearch': 300,
+    'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineElasticSearch': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

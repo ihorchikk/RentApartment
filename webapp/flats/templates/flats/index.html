@@ -1,30 +1,61 @@
 {% extends 'flats/base.html' %}
 
 {% block title %}
-    Welcome to flats list
+Welcome to flats list
 {% endblock %}
 
 
 {% block content %}
 
-<a class="btn btn-primary" href="{% url 'sort_by_price_asc' %}" role="button">Отсортировать по цене по убыванию</a>
-<a class="btn btn-primary" href="{% url 'sort_by_price_desc' %}" role="button">Отсортировать по цене по возростанию</a>
-<a class="btn btn-primary" href="#" role="button">Отсортировать по дате добавления от самого первого</a>
-<a class="btn btn-primary" href="#" role="button">Отсортировать по дате добавления от последнего</a>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <form id="filter" method="post">
+                    {% csrf_token %}
+                    {{ form}}
+                    Район:
+                    {% for dist in district%}
+                    <div class="form-check">
+                        <input id="district" name="district" class="form-check-input" type="checkbox" value="{{dist.district}}" form="filter">
+                        <label for="district" class="form-check-label">
+                            {{dist.district}} количество ({{dist.dcount}})
+                        </label>
+                    </div>
+                    {% endfor %}
+                    Количество комнат:
+                    {% for rooms in rooms_count%}
+                    <div class="form-check">
+                        <input id="rooms_count" name="rooms_count" class="form-check-input" type="checkbox" value="{{rooms.rooms_count}}" form="filter">
+                        <label for="rooms_count" class="form-check-label">
+                        {{rooms.rooms_count}} количество ({{rooms.dcount}})
+                        </label>
+                    </div>
+                    {% endfor %}
+                    <div class="input-group mb-3">
+                        <label for="price_from" class="input-group-prepend">
+                            <span class="input-group-text">UAH from</span>
+                        </label>
+                        <input id="price_from" name="price_from" type="number" class="form-control" aria-label="" form="filter">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="price_to" class="input-group-prepend">
+                            <span class="input-group-text">UAH to</span>
+                        </label>
+                        <input id="price_to" name="price_to" type="number" class="form-control" aria-label="" form="filter">
+                    </div>
 
-
-<div class="container">
-    <ul class="nav nav-pills">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu">
-                {% for dist in district%}
-                <a class="dropdown-item" href="#">{{dist.district}} ({{dist.dcount}})</a>
-                {% endfor %}
+                    <button type="submit" form="filter" class="btn btn-primary">Submit</button>
+                </form>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
 </div>
+
+<a href="{% url 'sort_by_price_asc' %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Отсортировать по цене по убыванию</a>
+<a href="{% url 'sort_by_price_desc' %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Отсортировать по цене по возростанию</a>
+<a href="#" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Отсортировать по дате добавления от самого первого</a>
+<a href="#" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Отсортировать по дате добавления от последнего</a>
 
 
 
@@ -84,5 +115,3 @@
     </ul>
 </nav>
 {% endblock %}
-
-
