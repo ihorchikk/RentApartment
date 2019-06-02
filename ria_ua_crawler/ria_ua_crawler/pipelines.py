@@ -9,9 +9,7 @@ from datetime import datetime
 import psycopg2
 from elasticsearch import Elasticsearch
 from scrapy import log
-import sqlite3
 import redis
-import elasticsearch
 
 
 class RiaUaCrawlerPipelinePostgres(object):
