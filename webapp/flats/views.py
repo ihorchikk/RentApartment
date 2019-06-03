@@ -1,13 +1,20 @@
-from collections import namedtuple
+import configparser
+from ast import literal_eval
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
 from django.shortcuts import render
 from elasticsearch import Elasticsearch
 
 from flats.forms import Filter
 from .models import Advert
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
-from ast import literal_eval
+
+config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+config.read('settings_server.ini')
+
+ES_SOCKET = config.get('ES', 'ES_SOCKET')
+ES_INDEX = config.get('ES', 'ES_INDEX')
+ITEMS_PER_PAGE = config.get('Django', 'ITEMS_PER_PAGE')
 
 
 def flats_views(request):
@@ -46,7 +53,7 @@ def paginator_handler(request, flats):
     :param flats:
     :return:
     '''
-    paginator = Paginator(flats, 10)
+    paginator = Paginator(flats, ITEMS_PER_PAGE)
     page = request.GET.get('page')
     try:
         contacts = paginator.page(page)
@@ -71,8 +78,8 @@ def find_ids(search_template):
                         }
                     }
                     }
-    es = Elasticsearch("127.0.0.1:9200", use_ssl=False)
-    search_result = es.search(index='dom.ria.com_index', body=search_query)
+    es = Elasticsearch("{}".format(ES_SOCKET), use_ssl=False)
+    search_result = es.search(index=''.format(ES_INDEX), body=search_query)
     hits = search_result['hits']['hits']
     return [post['_source']['sku'] for post in hits]
 

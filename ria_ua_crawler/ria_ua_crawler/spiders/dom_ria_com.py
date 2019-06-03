@@ -14,13 +14,24 @@ class DomRiaComSpider(scrapy.Spider):
     start_urls = ['https://dom.ria.com/arenda-kvartir/kiev/']
 
     def parse(self, response):
+        """
+
+        :param response:
+        :return:
+        """
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
                                       'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
+        pages_count = [2]
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url='{}?page={}'.format(response.url, page),
                                  callback=self.parse_category)
 
     def parse_category_item(self, response):
+        """
+
+        :param response:
+        :return:
+        """
         jsonresponse = response.xpath('//script[@type="application/ld+json"]/text()').extract()
         if jsonresponse:
             json_data = json.loads(*jsonresponse)[0]
@@ -32,7 +43,7 @@ class DomRiaComSpider(scrapy.Spider):
 
                 sku = data['offers']['sku']
                 selector = '//section[@data-realtyid="{}"]'.format(sku)
-                l.add_xpath('price_UAH', '{}//b[@title="Цена"]/text()'.format(selector))
+                l.add_xpath('price_UAH', '{}//b[@title="Цена"]/text()'.format(selector), re='(\d+[ ,.]?\d+)')
                 l.add_xpath('district', '{}//h3[contains(@class,"size18")]/a/text()[1]'.format(selector))
                 l.add_xpath('rooms_count', '{}//li[@title="Комнат"]/text()'.format(selector), re='\d+')
                 item_url = l.get_xpath('{}//a[@class="blue"]/@href'.format(selector))
@@ -43,12 +54,22 @@ class DomRiaComSpider(scrapy.Spider):
             raise ValueError('jsonresponse is empty')
 
     def parse_category(self, response):
+        """
+
+        :param response:
+        :return:
+        """
         urls = response.xpath('//a[@class="all-clickable unlink"]/@href').extract()
         for url in urls:
             yield scrapy.Request(url=urljoin(response.url, url),
                                  callback=self.parse_item)
 
     def parse_item(self, response):
+        """
+
+        :param response:
+        :return:
+        """
         if response.xpath('//dl[@class="head__page-404"]').extract():
             return HttpError('404 Not found')
         l = RiaLoader(RiaUaCrawlerItem(), response=response)

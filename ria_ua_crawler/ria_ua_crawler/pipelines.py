@@ -4,16 +4,25 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+import configparser
 from datetime import datetime
 
 import psycopg2
 from elasticsearch import Elasticsearch
 from scrapy import log
 
+config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+config.read('../settings_server.ini')
+PG_DB_NAME = config.get('PG', 'PG_DB_NAME')
+PG_USER = config.get('PG','PG_USER')
+PG_TB_NAME = config.get('PG','PG_TB_NAME')
+ES_SOCKET = config.get('ES','ES_SOCKET')
+
 
 class RiaUaCrawlerPipelinePostgres(object):
     def __init__(self):
-        self.connection = psycopg2.connect("dbname=appartments user=ihorchikk")
+        self.connection = psycopg2.connect("dbname={dbname} user={user}".format(dbname=PG_DB_NAME,
+                                                                                user=PG_USER))
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
                             CREATE TABLE IF NOT EXISTS 
@@ -31,7 +40,13 @@ class RiaUaCrawlerPipelinePostgres(object):
                             """)
 
     def process_item(self, item, spider):
-        self.cursor.execute("SELECT * FROM flats_advert WHERE sku={} ;".format(item.get('sku')))
+        """
+
+        :param item:
+        :param spider:
+        :return:
+        """
+        self.cursor.execute("SELECT * FROM {} WHERE sku={} ;".format(PG_TB_NAME, item.get('sku')))
         result = self.cursor.fetchone()
         if result:
             # TODO change to update data in table
@@ -65,9 +80,15 @@ class RiaUaCrawlerPipelinePostgres(object):
 
 class RiaUaCrawlerPipelineElasticSearch(object):
     def __init__(self):
-        self.connection = Elasticsearch("127.0.0.1:9200", use_ssl=False)
+        self.connection = Elasticsearch("{}".format(ES_SOCKET), use_ssl=False)
 
     def exist_data(self, item, spider):
+        """
+
+        :param item:
+        :param spider:
+        :return:
+        """
         if self.connection.indices.exists(index='{}_index'.format(spider.name)):
             search_query = {"stored_fields": ["sku"],
                             "query":
@@ -85,7 +106,12 @@ class RiaUaCrawlerPipelineElasticSearch(object):
             return True
 
     def process_item(self, item, spider):
+        """
 
+        :param item:
+        :param spider:
+        :return:
+        """
         search_result = self.exist_data(item, spider)
         if search_result:
             data = {'title': item.get('title', 'Not found title'),

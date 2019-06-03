@@ -1,14 +1,9 @@
-from datetime import datetime
-
 from django.db import models
 
-# Create your models here.
-from django.forms import ModelForm, DateField
 from django.utils import timezone
 
 
 class Advert(models.Model):
-    # id = models.IntegerField(primary_key=True, db_index=True)
     title = models.TextField(db_index=True)
     description = models.TextField(db_index=True)
     rooms_count = models.IntegerField(db_index=True)
