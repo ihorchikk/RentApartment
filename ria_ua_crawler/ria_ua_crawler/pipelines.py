@@ -34,8 +34,8 @@ class RiaUaCrawlerPipelinePostgres(object):
         self.cursor.execute("SELECT * FROM flats_advert WHERE sku={} ;".format(item.get('sku')))
         result = self.cursor.fetchone()
         if result:
-            log.msg("Item already in database")
-
+            # TODO change to update data in table
+            log.msg("Item already in PostgreSQL")
         else:
             self.cursor.execute(
                 """
@@ -68,17 +68,21 @@ class RiaUaCrawlerPipelineElasticSearch(object):
         self.connection = Elasticsearch("127.0.0.1:9200", use_ssl=False)
 
     def exist_data(self, item, spider):
-        search_query = {"stored_fields": ["sku"],
-                        "query":
-                            {"term":
-                                {"sku": item['sku']}
-                             }
-                        }
-        search_result = self.connection.search(index='{}_index'.format(spider.name), body=search_query)
-        if search_result['hits']['total'] == 0:
-            return True
+        if self.connection.indices.exists(index='{}_index'.format(spider.name)):
+            search_query = {"stored_fields": ["sku"],
+                            "query":
+                                {"term":
+                                    {"sku": item['sku']}
+                                 }
+                            }
+            search_result = self.connection.search(index='{}_index'.format(spider.name), body=search_query)
+            if search_result['hits']['total'] == 0:
+                return True
+            else:
+                # TODO change to update data in index
+                log.msg("Item already in Elasticsearch")
         else:
-            self.connection.update_by_query
+            return True
 
     def process_item(self, item, spider):
 
