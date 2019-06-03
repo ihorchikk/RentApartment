@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 # Create your models here.
@@ -16,7 +18,7 @@ class Advert(models.Model):
     district = models.CharField(max_length=200, db_index=True)
     sku = models.IntegerField(primary_key=True, db_index=True)
     image_url = models.SlugField(max_length=200, db_index=True, default='Not found image')
-    # published_at = models.DateField(input_formats=())
+    published_at = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f'{self.title}'

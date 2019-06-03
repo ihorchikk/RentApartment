@@ -25,7 +25,8 @@ class RiaUaCrawlerPipelinePostgres(object):
                             'url VARCHAR(200),'
                             'district VARCHAR(200),'
                             'sku INTEGER PRIMARY KEY,'
-                            'image_url VARCHAR(200));')
+                            'image_url VARCHAR(200),'
+                            'published_at DATE);')
 
     def process_item(self, item, spider):
         self.cursor.execute(f"SELECT * FROM flats_advert WHERE sku={item.get('sku')} ;")
@@ -36,7 +37,7 @@ class RiaUaCrawlerPipelinePostgres(object):
         else:
             self.cursor.execute(
                 "INSERT INTO "
-                "flats_advert (title, description, rooms_count, price_usd, price_uah, url, district, sku, image_url) "
+                "flats_advert (title, description, rooms_count, price_usd, price_uah, url, district, sku, image_url, published_at) "
                 f"VALUES ('{item.get('title', 'Not found title')}', "
                 f"'{item.get('description', 'Not found description')}', "
                 f"'{item.get('rooms_count', 'Not found rooms_count')}', "
@@ -45,9 +46,8 @@ class RiaUaCrawlerPipelinePostgres(object):
                 f"'{item.get('url', 'Not found url')}',"
                 f"'{item.get('district', 'Not found district')}',"
                 f"'{item.get('sku', 'Not found sku')}',"
-                f"'{item.get('image_url', 'Not found image_url')}');",
-                # f"{item.get('', 'Not found image_url')});",
-                # datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y'),
+                f"'{item.get('image_url', 'Not found image_url')}',"
+                f"'{datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y')}');"
                  )
             self.connection.commit()
 
@@ -87,7 +87,7 @@ class RiaUaCrawlerPipelineElasticSearch(object):
         if search_result['hits']['total'] == 0:
             return True
 
-    async def process_item(self, item, spider):
+    def process_item(self, item, spider):
 
         search_result = self.exist_data(item)
         if search_result:
@@ -99,7 +99,8 @@ class RiaUaCrawlerPipelineElasticSearch(object):
                     'url': item.get('url', 'Not found url'),
                     'district': item.get('district', 'Not found district'),
                     'sku':  item.get('sku', 'Not found sku'),
-                    'image_url': item.get('image_url', 'Not found image_url'),}
+                    'image_url': item.get('image_url', 'Not found image_url'),
+                    'published_at': datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y')}
             self.connection.index(index=f'{spider.name}_index', doc_type=f'{spider.name}_doctype', body=data)
         else:
             log.msg("Item stored in ES")
