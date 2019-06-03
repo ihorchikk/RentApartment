@@ -21,6 +21,6 @@ class Advert(models.Model):
     published_at = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return f'{self.title}'
+        return '{}'.format(self.title)
 
 

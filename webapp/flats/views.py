@@ -11,6 +11,11 @@ from ast import literal_eval
 
 
 def flats_views(request):
+    '''
+
+    :param request:
+    :return:
+    '''
     filter_paged = filter_fields(request)
     all_data = Advert.objects.all()
     filters = filter_paged.get('filters')
@@ -35,6 +40,12 @@ def flats_views(request):
 
 
 def paginator_handler(request, flats):
+    '''
+
+    :param request:
+    :param flats:
+    :return:
+    '''
     paginator = Paginator(flats, 10)
     page = request.GET.get('page')
     try:
@@ -47,10 +58,15 @@ def paginator_handler(request, flats):
 
 
 def find_ids(search_template):
+    '''
+
+    :param search_template:
+    :return:
+    '''
     search_query = {"_source": ["sku"],
                     "query": {
                         "multi_match": {
-                            "query": f"{search_template}",
+                            "query": "{}".format(search_template),
                             "fields": ["title", "description"]
                         }
                     }
@@ -62,6 +78,11 @@ def find_ids(search_template):
 
 
 def filter_fields(request):
+    '''
+
+    :param request:
+    :return:
+    '''
     if request.method == 'POST':
         form = Filter(request.POST)
         if form.is_valid():
@@ -79,12 +100,21 @@ def filter_fields(request):
 
 
 def get_district_and_rooms():
+    '''
+
+    :return:
+    '''
     district = Advert.objects.values('district').annotate(dcount=Count('district'))
     rooms_count = Advert.objects.values('rooms_count').annotate(dcount=Count('rooms_count'))
     return district, rooms_count
 
 
 def sort_view(request):
+    '''
+
+    :param request:
+    :return:
+    '''
     if 'sort_by_price_asc' in request.path:
         order_query = '-price_uah'
     elif 'sort_by_price_desc' in request.path:
@@ -103,14 +133,14 @@ def sort_view(request):
     if search:
         ids = find_ids(search)
         if filters:
-            flats = all_data.order_by(f"{order_query}").filter(sku__in=ids).filter(**filters)
+            flats = all_data.order_by("{}".format(order_query)).filter(sku__in=ids).filter(**filters)
         else:
-            flats = all_data.order_by(f"{order_query}").filter(sku__in=ids)
+            flats = all_data.order_by("{}".format(order_query)).filter(sku__in=ids)
     else:
         if filters:
-            flats = all_data.order_by(f"{order_query}").filter(**filters)
+            flats = all_data.order_by("{}".format(order_query)).filter(**filters)
         else:
-            flats = all_data.order_by(f"{order_query}")
+            flats = all_data.order_by("{}".format(order_query))
     contacts = paginator_handler(request, flats)
     district, rooms_count = get_district_and_rooms()
     return render(request, 'flats/index.html', context={'contacts': contacts,
