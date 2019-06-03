@@ -7,7 +7,7 @@
 
 import scrapy
 from scrapy.item import Field
-from scrapy.loader import ItemLoader, Identity
+from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
 
@@ -24,7 +24,7 @@ class RiaUaCrawlerItem(scrapy.Item):
     district = Field(required=True)
     sku = Field(required=True, )
     image_url = Field(required=True)
-    published_at = Field(required=True)
+    published_at = Field()
 
 
 class RiaLoader(ItemLoader):

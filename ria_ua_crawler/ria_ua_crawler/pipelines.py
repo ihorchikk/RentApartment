@@ -52,6 +52,7 @@ class RiaUaCrawlerPipelinePostgres(object):
             # TODO change to update data in table
             log.msg("Item already in PostgreSQL")
         else:
+            published_at = item.get('published_at').strip() if item.get('published_at') else datetime.now()
             self.cursor.execute(
                 """
                 INSERT INTO
@@ -71,7 +72,7 @@ class RiaUaCrawlerPipelinePostgres(object):
                            district=item.get('district', 'Not found district'),
                            sku=item.get('sku', 'Not found sku'),
                            image_url=item.get('image_url', 'Not found image_url'),
-                           published_at=datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y')))
+                           published_at=datetime.strptime(published_at, '%d.%m.%Y')))
             self.connection.commit()
 
             log.msg("Item stored in PostgreSQL")
