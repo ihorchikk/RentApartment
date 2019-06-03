@@ -52,7 +52,7 @@ class RiaUaCrawlerPipelinePostgres(object):
             # TODO change to update data in table
             log.msg("Item already in PostgreSQL")
         else:
-            published_at = datetime.strftime(datetime.now(), '%d.%m.%Y')
+            published_at = item.get('published_at') if item.get('published_at') else datetime.strftime(datetime.now(), '%d.%m.%Y')
             self.cursor.execute(
                 """
                 INSERT INTO
@@ -115,6 +115,7 @@ class RiaUaCrawlerPipelineElasticSearch(object):
         """
         search_result = self.exist_data(item, spider)
         if search_result:
+            published_at = item.get('published_at') if item.get('published_at') else datetime.strftime(datetime.now(), '%d.%m.%Y')
             data = {'title': item.get('title', 'Not found title'),
                     'description': item.get('description', 'Not found description'),
                     'rooms_count': item.get('rooms_count', 'Not found rooms_count'),
@@ -124,7 +125,7 @@ class RiaUaCrawlerPipelineElasticSearch(object):
                     'district': item.get('district', 'Not found district'),
                     'sku':  item.get('sku', 'Not found sku'),
                     'image_url': item.get('image_url', 'Not found image_url'),
-                    'published_at': datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y')}
+                    'published_at': datetime.strptime(published_at, '%d.%m.%Y')}
             self.connection.index(index='{}_index'.format(spider.name),
                                   doc_type='{}_doctype'.format(spider.name),
                                   body=data)
