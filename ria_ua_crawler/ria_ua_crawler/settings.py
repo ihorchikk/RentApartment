@@ -65,7 +65,6 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'ria_ua_crawler.pipelines.RiaUaCrawlerPipelinePostgres': 300,
-    # 'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineRedis': 300,
     'ria_ua_crawler.pipelines.RiaUaCrawlerPipelineElasticSearch': 300,
 }
 

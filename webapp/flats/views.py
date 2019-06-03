@@ -126,7 +126,6 @@ def sort_view(request):
     else:
         raise ValueError('Cannot find sort phrase in request.path')
     filter_data = literal_eval(request.GET.get('filter_data', '{"filter_data": {}}'))
-    print(filter_data)
     all_data = Advert.objects.all()
     filters = filter_data.get('filters')
     search = filter_data.get('search')
