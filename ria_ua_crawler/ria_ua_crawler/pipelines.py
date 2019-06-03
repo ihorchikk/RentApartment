@@ -27,8 +27,8 @@ class RiaUaCrawlerPipelinePostgres(object):
         self.cursor.execute("""
                             CREATE TABLE IF NOT EXISTS 
                                     flats_advert
-                                    (title VARCHAR(200), 
-                                    description VARCHAR(1000), 
+                                    (title TEXT, 
+                                    description TEXT, 
                                     rooms_count INTEGER,
                                     price_usd REAL,
                                     price_uah REAL,
