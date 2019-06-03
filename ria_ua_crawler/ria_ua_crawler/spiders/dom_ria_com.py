@@ -85,7 +85,7 @@ class DomRiaComSpider(scrapy.Spider):
 
         l.add_xpath('title', '//h1/text()')
         l.add_xpath('price_USD', '//span[@class="grey size13"]/text()')
-        l.add_xpath('price_UAH', '//span[@class="price"]/text()')
+        l.add_xpath('price_UAH', '//span[@class="price"]/text()', re='(\d+[ ,.]?\d+)')
         l.add_xpath('district', '//h1', re='р‑н?.\s+?(.+?),')
         l.add_xpath('rooms_count', '//*[@title="комнат"]/text()', re='(\d+)')
         l.add_value('url', response.url)
