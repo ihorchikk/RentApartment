@@ -182,7 +182,17 @@ Welcome to flats list
         <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">
             {{ contacts.next_page_number }}</a></li>
         {% endif %}
-
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+        </li>
+        {% if contacts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">
+            {{ contacts.next_page_number }}</a></li>
+        {% endif %}
+        {% if contacts.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ contacts.paginator.num_pages }}">
+            {{ contacts.paginator.num_pages }}</a></li>
+        {% endif %}
         <li class="page-item">
             {% if contacts.has_next %}
             <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
@@ -190,5 +200,4 @@ Welcome to flats list
         </li>
     </ul>
 </nav>
-</div>
 {% endblock %}
