@@ -1,7 +1,7 @@
 import configparser
 from ast import literal_eval
 
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Count
 from elasticsearch import Elasticsearch
 
@@ -45,8 +45,8 @@ def find_ids(search_template):
                         "multi_match": {
                             "query": "{}".format(search_template),
                             "fields": ["title", "description"]
+                            }
                         }
-                    }
                     }
     es = Elasticsearch("{}".format(ES_SOCKET), use_ssl=False)
     search_result = es.search(index=''.format(ES_INDEX), body=search_query)

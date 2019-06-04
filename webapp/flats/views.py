@@ -1,7 +1,9 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from flats.utils import filter_fields, find_ids, get_district_and_rooms, paginator_handler
+from flats.utils import (filter_fields, find_ids, get_district_and_rooms,
+                         paginator_handler)
+
 from .models import Advert
 
 
@@ -63,4 +65,3 @@ def sort_view(request):
                                                         'district': district,
                                                         'rooms_count': rooms_count,
                                                         'filtered_infromation': filter_data})
-

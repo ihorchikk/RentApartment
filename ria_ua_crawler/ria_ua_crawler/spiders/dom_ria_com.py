@@ -92,4 +92,3 @@ class DomRiaComSpider(scrapy.Spider):
         l.add_value('url', response.url)
         l.add_xpath('published_at', '//*[contains(text(),"Опубликовано")]/text()[2]')
         yield l.load_item()
-

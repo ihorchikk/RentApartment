@@ -145,7 +145,7 @@ class RiaUaCrawlerPipelineElasticSearch(object):
                     'price_UAH': float(item.get('price_UAH').replace(' ', '')),
                     'url': item.get('url'),
                     'district': item.get('district', 'Район не задано.'),
-                    'sku':  item.get('sku', 'Код не задано.'),
+                    'sku': item.get('sku', 'Код не задано.'),
                     'image_url': item.get('image_url', 'Изображение не задано.'),
                     'published_at': datetime.strptime(item.get('published_at').strip(), '%d.%m.%Y')}
             self.connection.index(index='{}_index'.format(spider.name),
@@ -153,5 +153,3 @@ class RiaUaCrawlerPipelineElasticSearch(object):
                                   body=data)
             log.msg("Item stored in ES")
         return item
-
-

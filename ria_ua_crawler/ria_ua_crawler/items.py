@@ -8,7 +8,7 @@
 import scrapy
 from scrapy.item import Field
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import TakeFirst, MapCompose, Join
+from scrapy.loader.processors import Join, MapCompose, TakeFirst
 
 
 class RiaUaCrawlerItem(scrapy.Item):
