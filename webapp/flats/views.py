@@ -1,5 +1,3 @@
-from ast import literal_eval
-
 from django.http import Http404
 from django.shortcuts import render
 
@@ -8,24 +6,22 @@ from .models import Advert
 
 
 def flats_views(request):
-    '''
+    """
 
     :param request:
     :return:
-    '''
+    """
 
     filter_paged = filter_fields(request)
     all_data = Advert.objects.all()
     filters = filter_paged.get('filters')
     search = filter_paged.get('search')
-
     if search:
         ids = find_ids(search)
         flats = all_data.filter(sku__in=ids).filter(**filters) if filters else all_data.filter(sku__in=ids)
     else:
         flats = all_data.filter(**filters) if filters else all_data
-
-    district, rooms_count = get_district_and_rooms()
+    district, rooms_count = get_district_and_rooms('district'), get_district_and_rooms('rooms_count')
     contacts = paginator_handler(request, flats)
     return render(request, 'flats/index.html', context={'contacts': contacts,
                                                         'district': district,
@@ -34,11 +30,11 @@ def flats_views(request):
 
 
 def sort_view(request):
-    '''
+    """
 
     :param request:
     :return:
-    '''
+    """
     if 'sort_by_price_asc' in request.path:
         order_query = '-price_uah'
     elif 'sort_by_price_desc' in request.path:
@@ -50,7 +46,7 @@ def sort_view(request):
     else:
         raise Http404("Page not found")
 
-    filter_data = literal_eval(request.GET.get('filter_data', '{"filter_data": {}}'))
+    filter_data = filter_fields(request)
     all_data = Advert.objects.all().order_by("{}".format(order_query))
     filters = filter_data.get('filters')
     search = filter_data.get('search')
@@ -62,7 +58,7 @@ def sort_view(request):
         flats = all_data.filter(**filters) if filters else all_data
 
     contacts = paginator_handler(request, flats)
-    district, rooms_count = get_district_and_rooms()
+    district, rooms_count = get_district_and_rooms('district'), get_district_and_rooms('rooms_count')
     return render(request, 'flats/index.html', context={'contacts': contacts,
                                                         'district': district,
                                                         'rooms_count': rooms_count,

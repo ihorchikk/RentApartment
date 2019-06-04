@@ -27,11 +27,9 @@ ES_SOCKET = config.get('ES', 'ES_SOCKET')
 
 class RiaUaCrawlerPipelinePostgres(object):
     def __init__(self):
-        self.connection = psycopg2.connect("host={host} "
-                                           "password={password} "
+        self.connection = psycopg2.connect(
                                            "dbname={dbname} "
-                                           "user={user}".format(host=PG_HOST,
-                                                                password=PG_PASS,
+                                           "user={user}".format(
                                                                 dbname=PG_DB_NAME,
                                                                 user=PG_USER))
         self.cursor = self.connection.cursor()

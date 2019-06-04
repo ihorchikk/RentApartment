@@ -12,8 +12,7 @@ Welcome to flats list
         <div class="row">
             <div class="col">
                 <form action="{% url 'flats_list' %}" class="filter-form d-flex flex-wrap justify-content-between pb-4"
-                      id="filter"
-                      method="post">
+                      id="filter" method="post">
                     {% csrf_token %}
                     {{ form}}
 
@@ -88,22 +87,30 @@ Welcome to flats list
 
     <div class="flats-sort">
         <div class="flats-sort d-flex justify-content-between">
-            <form action="{% url 'sort_by_price_asc' %}" method="get">
+            <form action="{% url 'sort_by_price_asc' %}" method="post">
+                {% csrf_token %}
+                {{ form}}
                 <button class="btn btn-outline-dark" name="filter_data" value="{{ filtered_infromation }}">
                     Цена &#x25BC
                 </button>
             </form>
-            <form action="{% url 'sort_by_price_desc' %}" method="get">
+            <form action="{% url 'sort_by_price_desc' %}" method="post">
+                {% csrf_token %}
+                {{ form}}
                 <button class="btn btn-outline-dark" name="filter_data" value="{{ filtered_infromation }}">
                     Цена &#x25B2
                 </button>
             </form>
-            <form action="{% url 'sort_by_date_asc' %}" method="get">
+            <form action="{% url 'sort_by_date_asc' %}" method="post">
+                {% csrf_token %}
+                {{ form}}
                 <button class="btn btn-outline-dark" name="filter_data" value="{{ filtered_infromation }}">
                     Дате добавления &#x25BC
                 </button>
             </form>
-            <form action="{% url 'sort_by_date_desc' %}" method="get">
+            <form action="{% url 'sort_by_date_desc' %}" method="post">
+                {% csrf_token %}
+                {{ form}}
                 <button class="btn btn-outline-dark" name="filter_data" value="{{ filtered_infromation }}">
                     Дате добавления &#x25B2
                 </button>
@@ -166,37 +173,75 @@ Welcome to flats list
     <ul class="pagination justify-content-center">
         <li class="page-item">
             {% if contacts.has_previous %}
-            <a class="page-link" href="?page={{ contacts.previous_page_number }}" tabindex="-1"
-               aria-disabled="true">Previous</a>
+            <form action="?page={{ contacts.previous_page_number }}" method="post">
+                {% csrf_token %}
+                {{ form}}
+                <button class="page-link" tabindex="-1" name="filter_data" value="{{ filtered_infromation }}"
+                        aria-disabled="true">
+                    Previous
+                </button>
+            </form>
             {% endif %}
         </li>
 
         {% if contacts.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ contacts.previous_page_number }}">
-            {{ contacts.previous_page_number }}</a></li>
+        <li class="page-item">
+            <form action="?page={{ contacts.previous_page_number }}" method="post">
+                {% csrf_token %}
+                {{ form}}
+                <button class="page-link" tabindex="-1" name="filter_data" value="{{ filtered_infromation }}"
+                        aria-disabled="true">
+                    {{ contacts.previous_page_number }}
+                </button>
+            </form>
+        </li>
         {% endif %}
         <li class="page-item active" aria-current="page">
             <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
         </li>
         {% if contacts.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">
-            {{ contacts.next_page_number }}</a></li>
+
+        <li class="page-item">
+            <form action="?page={{ contacts.next_page_number }}" method="post">
+                {% csrf_token %}
+                {{ form}}
+                <button class="page-link" tabindex="-1" name="filter_data" value="{{ filtered_infromation }}"
+                        aria-disabled="true">
+                    {{ contacts.next_page_number }}
+                </button>
+            </form>
+        </li>
         {% endif %}
         {% if contacts.has_next %}
         <li class="page-item disabled">
             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
         </li>
-
-        {% if contacts.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ contacts.paginator.num_pages }}">
-            {{ contacts.paginator.num_pages }}</a></li>
-        {% endif %}
-        {% endif %}
         <li class="page-item">
             {% if contacts.has_next %}
-            <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
+            <form action="?page={{ contacts.next_page_number }}" method="post">
+                {% csrf_token %}
+                {{ form}}
+                <button class="page-link" tabindex="-1" name="filter_data" value="{{ filtered_infromation }}"
+                        aria-disabled="true">
+                    Next
+                </button>
+            </form>
             {% endif %}
         </li>
+        {% if contacts.paginator.num_pages %}
+        <li class="page-item">
+            <form action="?page={{ contacts.paginator.num_pages }}" method="post">
+                {% csrf_token %}
+                {{ form}}
+                <button class="page-link" tabindex="-1" name="filter_data" value="{{ filtered_infromation }}"
+                        aria-disabled="true">
+                    Last
+                </button>
+            </form>
+        </li>
+        {% endif %}
+        {% endif %}
     </ul>
+
 </nav>
 {% endblock %}

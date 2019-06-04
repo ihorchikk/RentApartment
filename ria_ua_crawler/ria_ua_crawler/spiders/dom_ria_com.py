@@ -14,23 +14,22 @@ class DomRiaComSpider(scrapy.Spider):
     start_urls = ['https://dom.ria.com/arenda-kvartir/kiev/']
 
     def parse(self, response):
-        """
+        """ Create requests for category pages.
 
-        :param response:
-        :return:
+        :param response: HTTP response
+        :return: requests for next pages
         """
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
                                       'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
-        pages_count = [3]
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url='{}?page={}'.format(response.url, page),
                                  callback=self.parse_category)
 
     def parse_category_item(self, response):
-        """
+        """ Scraping data from category pages (not fully, because description has part of information)
 
-        :param response:
-        :return:
+        :param response: HTTP response
+        :return: item
         """
         jsonresponse = response.xpath('//script[@type="application/ld+json"]/text()').extract()
         if jsonresponse:
@@ -54,10 +53,10 @@ class DomRiaComSpider(scrapy.Spider):
             raise ValueError('jsonresponse is empty')
 
     def parse_category(self, response):
-        """
+        """ Parse links to advert
 
-        :param response:
-        :return:
+        :param response: HTTP response
+        :return: request to advert
         """
         urls = response.xpath('//a[@class="all-clickable unlink"]/@href').extract()
         for url in urls:
@@ -65,10 +64,10 @@ class DomRiaComSpider(scrapy.Spider):
                                  callback=self.parse_item)
 
     def parse_item(self, response):
-        """
+        """ Scraping data from advert
 
-        :param response:
-        :return:
+        :param response: HTTP response
+        :return: item
         """
         if response.xpath('//dl[@class="head__page-404"]').extract():
             return HttpError('404 Not found')
