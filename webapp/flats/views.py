@@ -6,10 +6,10 @@ from .models import Advert
 
 
 def flats_views(request):
-    """
+    """ View of main page
 
-    :param request:
-    :return:
+    :param request: HTTP request
+    :return: HTTP response
     """
 
     filter_paged = filter_fields(request)
@@ -30,10 +30,10 @@ def flats_views(request):
 
 
 def sort_view(request):
-    """
+    """ View of sort page
 
-    :param request:
-    :return:
+    :param request: HTTP request
+    :return: HTTP response
     """
     if 'sort_by_price_asc' in request.path:
         order_query = '-price_uah'
