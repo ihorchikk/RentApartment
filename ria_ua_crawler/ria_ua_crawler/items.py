@@ -24,7 +24,7 @@ class RiaUaCrawlerItem(scrapy.Item):
     district = Field(required=True)
     sku = Field(required=True, )
     image_url = Field(required=True)
-    published_at = Field()
+    published_at = Field(required=True)
 
 
 class RiaLoader(ItemLoader):

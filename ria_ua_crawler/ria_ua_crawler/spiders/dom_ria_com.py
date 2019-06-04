@@ -21,7 +21,7 @@ class DomRiaComSpider(scrapy.Spider):
         """
         pages_count = (response.xpath('//span[contains(text(), "...")]/'
                                       'following-sibling::span[@class="page-item mhide"]/a/text()').extract())
-        pages_count = [2]
+        pages_count = [3]
         for page in range(1, int(*pages_count)+1):
             yield scrapy.Request(url='{}?page={}'.format(response.url, page),
                                  callback=self.parse_category)
