@@ -34,10 +34,11 @@ def paginator_handler(request, flats):
     return contacts
 
 
-def find_ids(search_template):
-    """ Finding advert by some phrase
+def find_ids(search_template, index=ES_INDEX):
+    """Finding advert by some phrase
 
     :param search_template: search phrase
+    :param index: ES index
     :return: sku of adverts
     """
     search_query = {"_source": ["sku"],
@@ -49,7 +50,7 @@ def find_ids(search_template):
                         }
                     }
     es = Elasticsearch("{}".format(ES_SOCKET), use_ssl=False)
-    search_result = es.search(index=''.format(ES_INDEX), body=search_query)
+    search_result = es.search(index='{}'.format(index), body=search_query)
     hits = search_result['hits']['hits']
     return [post['_source']['sku'] for post in hits]
 
@@ -87,7 +88,7 @@ def filter_fields(request):
         return {'filters': {}, 'search': {}}
 
 
-def get_district_and_rooms(field):
+def get_field_cound(field):
     """ Create request to DB for collect information about district and rooms_count
 
     :param field: searching field

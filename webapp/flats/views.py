@@ -1,9 +1,8 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from flats.utils import (filter_fields, find_ids, get_district_and_rooms,
+from flats.utils import (filter_fields, find_ids, get_field_cound,
                          paginator_handler)
-
 from .models import Advert
 
 
@@ -23,7 +22,7 @@ def flats_views(request):
         flats = all_data.filter(sku__in=ids).filter(**filters) if filters else all_data.filter(sku__in=ids)
     else:
         flats = all_data.filter(**filters) if filters else all_data
-    district, rooms_count = get_district_and_rooms('district'), get_district_and_rooms('rooms_count')
+    district, rooms_count = get_field_cound('district'), get_field_cound('rooms_count')
     contacts = paginator_handler(request, flats)
     return render(request, 'flats/index.html', context={'contacts': contacts,
                                                         'district': district,
@@ -60,7 +59,7 @@ def sort_view(request):
         flats = all_data.filter(**filters) if filters else all_data
 
     contacts = paginator_handler(request, flats)
-    district, rooms_count = get_district_and_rooms('district'), get_district_and_rooms('rooms_count')
+    district, rooms_count = get_field_cound('district'), get_field_cound('rooms_count')
     return render(request, 'flats/index.html', context={'contacts': contacts,
                                                         'district': district,
                                                         'rooms_count': rooms_count,

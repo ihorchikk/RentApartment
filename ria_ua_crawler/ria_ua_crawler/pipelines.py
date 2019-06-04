@@ -4,8 +4,10 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+
 import configparser
 import logging
+import re
 from datetime import datetime
 
 import psycopg2
@@ -27,9 +29,11 @@ ES_SOCKET = config.get('ES', 'ES_SOCKET')
 
 class RiaUaCrawlerPipelinePostgres(object):
     def __init__(self):
-        self.connection = psycopg2.connect(
+        self.connection = psycopg2.connect("host={host} "
+                                           "password={password} "
                                            "dbname={dbname} "
-                                           "user={user}".format(
+                                           "user={user}".format(host=PG_HOST,
+                                                                password=PG_PASS,
                                                                 dbname=PG_DB_NAME,
                                                                 user=PG_USER))
         self.cursor = self.connection.cursor()
@@ -47,6 +51,11 @@ class RiaUaCrawlerPipelinePostgres(object):
                                     image_url VARCHAR(200),
                                     published_at DATE);
                             """)
+    @staticmethod
+    def clearing_string(str_field):
+        first_result = re.sub("'", '', str_field)
+        result = re.sub('"', '', first_result)
+        return result
 
     def process_item(self, item, spider):
         """ This method is called for every item pipeline component.
@@ -60,6 +69,7 @@ class RiaUaCrawlerPipelinePostgres(object):
             self.cursor.execute("SELECT * FROM {table} WHERE sku={sku} ;".format(table=PG_TB_NAME,
                                                                                  sku=item.get('sku')))
         except:
+            log.msg("Rollback, exception in request to PostgreSQL. Check me please!")
             self.cursor.execute("ROLLBACK")
         result = self.cursor.fetchone()
         if result:
@@ -85,9 +95,9 @@ class RiaUaCrawlerPipelinePostgres(object):
                 VALUES
                         ('{title}', '{description}', '{rooms_count}', '{price_usd}', '{price_uah}', 
                         '{url}', '{district}','{sku}','{image_url}', '{published_at}');
-                    
-                """.format(title=item.get('title', 'Название не задано.'),
-                           description=item.get('description', 'Описание не задано.'),
+                
+                """.format(title=self.clearing_string(item.get('title', 'Название не задано.')),
+                           description=self.clearing_string(item.get('description', 'Описание не задано.')),
                            rooms_count=item.get('rooms_count', 'Количество комнат не задано.'),
                            price_usd=float(item.get('price_USD')),
                            price_uah=float(item.get('price_UAH').replace(' ', '')),
