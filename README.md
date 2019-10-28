@@ -1,4 +1,4 @@
-apartments_search
+RentApartment
 ====================
 
 Local install
